@@ -1,14 +1,31 @@
 import { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
+import { AppLoading } from "expo";
+
 import Navbar from "./src/Components/Navbar";
 import MainScreen from "./src/Screens/MainScreen";
 import TodoScreen from "./src/Screens/TodoScreen";
 
+// async function loadApplication() {
+//   await
+// }
+
 export default function App() {
+  const [isReady, setIsReady] = useState(false);
   const [todos, setTodos] = useState([
     { id: "1", title: "Выучить React Native" },
   ]);
   const [todoId, setTodoId] = useState(null);
+
+  if (!isReady) {
+    return (
+      <AppLoading
+        // startAsync={loadApplication}
+        onError={(err) => console.log(err)}
+        onFinish={setIsReady(true)}
+      />
+    );
+  }
 
   const addTodo = (title) =>
     setTodos((prev) => [

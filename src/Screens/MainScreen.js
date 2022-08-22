@@ -1,20 +1,44 @@
-import React from "react";
-import { FlatList, Image, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import AddTodo from "../Components/AddTodo";
 import Todo from "../Components/Todo";
 
 const MainScreen = ({ addTodo, removeTodo, todos, openTodo }) => {
+  const [deviceWidth, setDeviceWidth] = useState(
+    Dimensions.get("window").width - 60
+  );
+
+  useEffect(() => {
+    const update = () => {
+      const width = Dimensions.get("window").width - 60;
+      setDeviceWidth(width);
+    };
+
+    Dimensions.addEventListener("change", update);
+    return () => {
+      Dimensions.removeEventListener("change", update);
+    };
+  });
   return (
     <View>
       <AddTodo onSubmit={addTodo} />
       {todos.length ? (
-        <FlatList
-          keyExtractor={(item) => item.id}
-          data={todos}
-          renderItem={({ item }) => (
-            <Todo todo={item} onRemove={removeTodo} onOpen={openTodo} />
-          )}
-        />
+        <View style={{ width: deviceWidth }}>
+          <FlatList
+            keyExtractor={(item) => item.id}
+            data={todos}
+            renderItem={({ item }) => (
+              <Todo todo={item} onRemove={removeTodo} onOpen={openTodo} />
+            )}
+          />
+        </View>
       ) : (
         <View style={styles.imgWrapp}>
           <Text>No todo</Text>
