@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { THEME } from "../theme";
 
-const EditModal = ({ visible, onCancel, value, onSave }) => {
+const EditModal = ({ visible, onCancel, value, updateTodo }) => {
   const [title, setTitle] = useState(value);
 
   const saveHandler = () => {
@@ -19,9 +19,13 @@ const EditModal = ({ visible, onCancel, value, onSave }) => {
         `Min length of title is 3. Now is ${title.trim().length}`
       );
     } else {
-      onSave(title);
+      updateTodo(title);
     }
-    // console.log("1", title);
+  };
+
+  const cancelHandler = () => {
+    setTitle(value);
+    onCancel();
   };
 
   return (
@@ -39,7 +43,7 @@ const EditModal = ({ visible, onCancel, value, onSave }) => {
         <View style={styles.buttons}>
           <Button
             title='Cancel'
-            onPress={onCancel}
+            onPress={cancelHandler}
             color={THEME.DANGER_COLOR}
           />
           <Button title='Save' onPress={saveHandler} />

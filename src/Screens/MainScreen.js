@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Dimensions,
   FlatList,
@@ -9,8 +9,12 @@ import {
 } from "react-native";
 import AddTodo from "../Components/AddTodo";
 import Todo from "../Components/Todo";
+import { ScreenContext } from "../context/screen/screenContext";
+import { TodoContext } from "../context/todo/todoContext";
 
-const MainScreen = ({ addTodo, removeTodo, todos, openTodo }) => {
+const MainScreen = () => {
+  const { addTodo, removeTodo, todos } = useContext(TodoContext);
+  const { changeScreen } = useContext(ScreenContext);
   const [deviceWidth, setDeviceWidth] = useState(
     Dimensions.get("window").width - 60
   );
@@ -35,7 +39,7 @@ const MainScreen = ({ addTodo, removeTodo, todos, openTodo }) => {
             keyExtractor={(item) => item.id}
             data={todos}
             renderItem={({ item }) => (
-              <Todo todo={item} onRemove={removeTodo} onOpen={openTodo} />
+              <Todo todo={item} onRemove={removeTodo} onOpen={changeScreen} />
             )}
           />
         </View>
