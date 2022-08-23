@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
+  Button,
   Dimensions,
   FlatList,
   Image,
@@ -9,15 +10,24 @@ import {
 } from "react-native";
 import AddTodo from "../Components/AddTodo";
 import Todo from "../Components/Todo";
+import AppLoader from "../Components/ui/AppLoader";
 import { ScreenContext } from "../context/screen/screenContext";
 import { TodoContext } from "../context/todo/todoContext";
+import { THEME } from "../theme";
 
 const MainScreen = () => {
-  const { addTodo, removeTodo, todos } = useContext(TodoContext);
+  const { addTodo, removeTodo, todos, fetchTodos, loading, error } =
+    useContext(TodoContext);
   const { changeScreen } = useContext(ScreenContext);
   const [deviceWidth, setDeviceWidth] = useState(
     Dimensions.get("window").width - 60
   );
+
+  const loadTodos = useCallback(async () => await fetchTodos(), [fetchTodos]);
+
+  useEffect(() => {
+    loadTodos();
+  }, []);
 
   useEffect(() => {
     const update = () => {
@@ -30,6 +40,20 @@ const MainScreen = () => {
       Dimensions.removeEventListener("change", update);
     };
   });
+
+  if (loading) {
+    return <AppLoader />;
+  }
+
+  if (error) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.error}>{error}</Text>
+        <Button title='Repeat' onPress={loadTodos} />
+      </View>
+    );
+  }
+
   return (
     <View>
       <AddTodo onSubmit={addTodo} />
@@ -68,6 +92,15 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     resizeMode: "contain",
+  },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  error: {
+    fontSize: 20,
+    color: THEME.DANGER_COLOR,
   },
 });
 
